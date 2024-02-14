@@ -34,7 +34,14 @@ import type { AddressesResponse } from 'types/api/addresses';
 import type { BlocksResponse, BlockTransactionsResponse, Block, BlockFilters, BlockWithdrawalsResponse } from 'types/api/block';
 import type { ChartMarketResponse, ChartTransactionResponse } from 'types/api/charts';
 import type { BackendVersionConfig } from 'types/api/configs';
-import type { SmartContract, SmartContractReadMethod, SmartContractWriteMethod, SmartContractVerificationConfig, SolidityscanReport } from 'types/api/contract';
+import type {
+  SmartContract,
+  SmartContractReadMethod,
+  SmartContractWriteMethod,
+  SmartContractVerificationConfig,
+  SolidityscanReport,
+  SmartContractSecurityAudits,
+} from 'types/api/contract';
 import type { VerifiedContractsResponse, VerifiedContractsFilters, VerifiedContractsCounters } from 'types/api/contracts';
 import type {
   EnsAddressLookupFilters,
@@ -432,6 +439,10 @@ export const RESOURCES = {
     path: '/api/v2/smart-contracts/:hash/solidityscan-report',
     pathParams: [ 'hash' as const ],
   },
+  contract_security_audits: {
+    path: '/api/v2/smart-contracts/:hash/audit-reports',
+    pathParams: [ 'hash' as const ],
+  },
 
   verified_contracts: {
     path: '/api/v2/smart-contracts',
@@ -805,6 +816,7 @@ never;
 export type ResourcePayloadB<Q extends ResourceName> =
 Q extends 'marketplace_dapps' ? Array<MarketplaceAppOverview> :
 Q extends 'marketplace_dapp' ? MarketplaceAppOverview :
+Q extends 'contract_security_audits' ? SmartContractSecurityAudits :
 never;
 /* eslint-enable @typescript-eslint/indent */
 

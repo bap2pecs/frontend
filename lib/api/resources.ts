@@ -57,6 +57,7 @@ import type {
 } from 'types/api/optimisticL2';
 import type { RawTracesResponse } from 'types/api/rawTrace';
 import type { SearchRedirectResult, SearchResult, SearchResultFilters, SearchResultItem } from 'types/api/search';
+import type { ShibariumWithdrawalsResponse, ShibariumDepositsResponse } from 'types/api/shibarium';
 import type { Counters, StatsCharts, StatsChart, HomeStats } from 'types/api/stats';
 import type {
   TokenCounters,
@@ -601,6 +602,25 @@ export const RESOURCES = {
     filterFields: [],
   },
 
+  // SHIBARIUM L2
+  shibarium_deposits: {
+    path: '/api/v2/shibarium/deposits',
+    filterFields: [],
+  },
+
+  shibarium_deposits_count: {
+    path: '/api/v2/shibarium/deposits/count',
+  },
+
+  shibarium_withdrawals: {
+    path: '/api/v2/shibarium/withdrawals',
+    filterFields: [],
+  },
+
+  shibarium_withdrawals_count: {
+    path: '/api/v2/shibarium/withdrawals/count',
+  },
+
   // USER OPS
   user_ops: {
     path: '/api/v2/proxy/account-abstraction/operations',
@@ -684,6 +704,7 @@ export type PaginatedResources = 'blocks' | 'block_txs' |
 'token_instance_transfers' | 'token_instance_holders' |
 'verified_contracts' |
 'l2_output_roots' | 'l2_withdrawals' | 'l2_txn_batches' | 'l2_deposits' |
+'shibarium_deposits' | 'shibarium_withdrawals' |
 'zkevm_l2_txn_batches' | 'zkevm_l2_txn_batch_txs' |
 'withdrawals' | 'address_withdrawals' | 'block_withdrawals' |
 'watchlist' | 'private_tags_address' | 'private_tags_tx' |
@@ -805,15 +826,18 @@ never;
 export type ResourcePayloadB<Q extends ResourceName> =
 Q extends 'marketplace_dapps' ? Array<MarketplaceAppOverview> :
 Q extends 'marketplace_dapp' ? MarketplaceAppOverview :
+Q extends 'shibarium_withdrawals' ? ShibariumWithdrawalsResponse :
+Q extends 'shibarium_deposits' ? ShibariumDepositsResponse :
+Q extends 'shibarium_withdrawals_count' ? number :
+Q extends 'shibarium_deposits_count' ? number :
 never;
 /* eslint-enable @typescript-eslint/indent */
 
 export type ResourcePayload<Q extends ResourceName> = ResourcePayloadA<Q> | ResourcePayloadB<Q>;
 
-// Right now there is no paginated resources in B-part
-// Add "| ResourcePayloadB<Q>[...]" if it is not true anymore
-export type PaginatedResponseItems<Q extends ResourceName> = Q extends PaginatedResources ? ResourcePayloadA<Q>['items'] : never;
-export type PaginatedResponseNextPageParams<Q extends ResourceName> = Q extends PaginatedResources ? ResourcePayloadA<Q>['next_page_params'] : never;
+export type PaginatedResponseItems<Q extends ResourceName> = Q extends PaginatedResources ? ResourcePayloadA<Q>['items'] | ResourcePayloadB<Q>['items'] : never;
+export type PaginatedResponseNextPageParams<Q extends ResourceName> =
+  Q extends PaginatedResources ? ResourcePayloadA<Q>['next_page_params'] | ResourcePayloadB<Q>['next_page_params'] : never;
 
 /* eslint-disable @typescript-eslint/indent */
 export type PaginationFilters<Q extends PaginatedResources> =
